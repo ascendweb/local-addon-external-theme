@@ -2,6 +2,8 @@
 
 A Local add-on that allows you to add external theme folders to your WordPress sites using symbolic links. This keeps your theme code out of the Local environment ensuring it never gets overwitten when pulling changes. Perfect for cloning theme repositories from Git into a different folder, especially if the production theme code is different from development such as when using automation to bundle the theme.
 
+![External Theme Add-on Screenshot](assets/example.png)
+
 ## Features
 
 - **🔗 Symbolic Link**: Creates symbolic links between external theme folders and WordPress themes directory.
