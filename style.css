@@ -1,0 +1,30 @@
+.external-theme-container {
+	vertical-align: middle;
+}
+
+.external-theme-inner {
+	display: flex;
+	align-items: stretch;
+
+	.group-divider {
+		margin: 0 15px;
+		border-left: 2px solid #434344;
+	}
+}
+
+.external-theme-button {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 0px;
+	margin: 0px;
+}
+
+.external-theme-sync-button {
+	cursor: pointer;
+	flex-direction: row-reverse;
+}
+
+.external-theme-tooltip {
+	margin-left: 10px;
+}
