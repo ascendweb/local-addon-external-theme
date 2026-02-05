@@ -35,7 +35,7 @@ export default function (context) {
 			try {
 				// Use ipcRenderer.invoke for cleaner async IPC
 				await ipcRenderer.invoke("external-theme-sync-theme", site.id);
-				alert(`Theme synced successfully!`);
+				alert(`Theme symbolic link created successfully!`);
 			} catch (error) {
 				alert(`Sync failed: ${error.message}`);
 			}
