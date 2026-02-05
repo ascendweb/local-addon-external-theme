@@ -75,7 +75,10 @@ export default function (context: LocalMain.AddonMainContext): void {
 
 			if (!selectedTheme) {
 				logger.log("error", `No theme selected for site ${siteId}.`);
-				throw new Error("No theme selected for this site.");
+				return {
+					success: false,
+					error: "No theme selected for this site.",
+				};
 			}
 
 			// Check if the theme directory exists
@@ -84,9 +87,10 @@ export default function (context: LocalMain.AddonMainContext): void {
 					"error",
 					`Selected theme directory does not exist: ${selectedTheme}`,
 				);
-				throw new Error(
-					`Selected theme directory does not exist: ${selectedTheme}`,
-				);
+				return {
+					success: false,
+					error: `Selected theme directory does not exist: ${selectedTheme}`,
+				};
 			}
 
 			// Open in native file explorer based on platform
@@ -106,15 +110,14 @@ export default function (context: LocalMain.AddonMainContext): void {
 			exec(command);
 			logger.log("info", `Opened theme folder: ${selectedTheme}`);
 
-			// Return nothing or just true - don't return an object
-			return true;
+			return { success: true };
 		} catch (error) {
 			logger.log(
 				"error",
 				`Error opening theme folder for site ${siteId}:`,
 				error,
 			);
-			throw error;
+			return { success: false, error: error.message };
 		}
 	}
 
@@ -129,12 +132,15 @@ export default function (context: LocalMain.AddonMainContext): void {
 
 			if (!selectedTheme) {
 				logger.log("error", `No theme selected for site ${siteId}.`);
-				throw new Error("No theme selected for this site.");
+				return {
+					success: false,
+					error: "No theme selected for this site.",
+				};
 			}
 
 			if (!site?.path) {
 				logger.log("error", `Site path not found for site ${siteId}.`);
-				throw new Error("Site path not found.");
+				return { success: false, error: "Site path not found." };
 			}
 
 			// Construct the WordPress themes directory path
@@ -154,9 +160,10 @@ export default function (context: LocalMain.AddonMainContext): void {
 					"error",
 					`Selected theme directory does not exist: ${selectedTheme}`,
 				);
-				throw new Error(
-					`Selected theme directory does not exist: ${selectedTheme}`,
-				);
+				return {
+					success: false,
+					error: `Selected theme directory does not exist: ${selectedTheme}`,
+				};
 			}
 
 			// Check if WordPress themes directory exists
@@ -165,9 +172,10 @@ export default function (context: LocalMain.AddonMainContext): void {
 					"error",
 					`WordPress themes directory does not exist: ${wpThemesDir}`,
 				);
-				throw new Error(
-					`WordPress themes directory does not exist: ${wpThemesDir}`,
-				);
+				return {
+					success: false,
+					error: `WordPress themes directory does not exist: ${wpThemesDir}`,
+				};
 			}
 
 			// Remove existing symlink or directory if it exists
@@ -218,12 +226,13 @@ export default function (context: LocalMain.AddonMainContext): void {
 				process.platform === "win32" &&
 				(error as any)?.code === "EPERM"
 			) {
-				throw new Error(
-					`Directory symlink creation failed.\n\nOn Windows, enable Developer Mode:\n1. Go to Settings → Update & Security → For developers\n2. Turn on "Developer Mode"\n3. Restart Local\n\nThis ensures your theme files won't be uploaded during deployment.`,
-				);
+				return {
+					success: false,
+					error: `Directory symlink creation failed.\n\nOn Windows, enable Developer Mode:\n1. Go to Settings → Update & Security → For developers\n2. Turn on "Developer Mode"\n3. Restart Local\n\nThis ensures your theme files won't be uploaded during deployment.`,
+				};
 			}
 
-			throw error;
+			return { success: false, error: error.message };
 		}
 	}
 
@@ -295,7 +304,10 @@ export default function (context: LocalMain.AddonMainContext): void {
 
 			if (!selectedTheme) {
 				logger.log("error", `No theme selected for site ${siteId}.`);
-				throw new Error("No theme selected for this site.");
+				return {
+					success: false,
+					error: "No theme selected for this site.",
+				};
 			}
 
 			// Check if the theme directory exists
@@ -304,9 +316,10 @@ export default function (context: LocalMain.AddonMainContext): void {
 					"error",
 					`Selected theme directory does not exist: ${selectedTheme}`,
 				);
-				throw new Error(
-					`Selected theme directory does not exist: ${selectedTheme}`,
-				);
+				return {
+					success: false,
+					error: `Selected theme directory does not exist: ${selectedTheme}`,
+				};
 			}
 
 			// Try to open in VS Code
@@ -335,10 +348,11 @@ export default function (context: LocalMain.AddonMainContext): void {
 					}
 				}
 
-				// If all paths fail, throw error
-				throw new Error(
-					"VS Code not found. Please make sure VS Code is installed and accessible from the command line.",
-				);
+				// If all paths fail, return error
+				return {
+					success: false,
+					error: "VS Code not found. Please make sure VS Code is installed and accessible from the command line.",
+				};
 			}
 		} catch (error) {
 			logger.log(
@@ -346,7 +360,7 @@ export default function (context: LocalMain.AddonMainContext): void {
 				`Error opening VS Code for site ${siteId}:`,
 				error,
 			);
-			throw error;
+			return { success: false, error: error.message };
 		}
 	});
 }

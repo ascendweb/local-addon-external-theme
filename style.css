@@ -4,11 +4,12 @@
 
 .external-theme-inner {
 	display: flex;
-	align-items: stretch;
+	align-items: center;
 
 	.group-divider {
 		margin: 0 15px;
 		border-left: 2px solid #434344;
+		align-self: stretch;
 	}
 }
 

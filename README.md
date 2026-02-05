@@ -33,7 +33,7 @@ A Local add-on that allows you to add external theme folders to your WordPress s
 
 1. Clone repo directly into the add-ons folder (paths described above)
 2. `npm install` (install dependencies)
-3. `npm run watch`
+3. `npm run dev`
 4. Open Local and enable add-on
 
 ## Development

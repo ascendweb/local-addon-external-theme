@@ -23,7 +23,7 @@
 	"scripts": {
 		"build": "tsc",
 		"prepare": "tsc",
-		"watch": "tsc --watch"
+		"dev": "tsc --watch"
 	},
 	"devDependencies": {
 		"@getflywheel/local": "^9",

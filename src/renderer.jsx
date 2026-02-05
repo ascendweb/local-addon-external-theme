@@ -34,9 +34,17 @@ export default function (context) {
 		const handleSyncTheme = async () => {
 			try {
 				// Use ipcRenderer.invoke for cleaner async IPC
-				await ipcRenderer.invoke("external-theme-sync-theme", site.id);
-				alert(`Theme symbolic link created successfully!`);
+				const result = await ipcRenderer.invoke(
+					"external-theme-sync-theme",
+					site.id,
+				);
+				if (result.success) {
+					alert(`Theme symbolic link created successfully!`);
+				} else {
+					alert(`Sync failed: ${result.error}`);
+				}
 			} catch (error) {
+				console.log(error);
 				alert(`Sync failed: ${error.message}`);
 			}
 		};
@@ -44,7 +52,13 @@ export default function (context) {
 		const handleOpenVSCode = async () => {
 			try {
 				// Use ipcRenderer.invoke to open VS Code
-				await ipcRenderer.invoke("external-theme-open-vscode", site.id);
+				const result = await ipcRenderer.invoke(
+					"external-theme-open-vscode",
+					site.id,
+				);
+				if (!result.success) {
+					alert(`Failed to open VS Code: ${result.error}`);
+				}
 			} catch (error) {
 				alert(`Failed to open VS Code: ${error.message}`);
 			}
@@ -52,8 +66,14 @@ export default function (context) {
 
 		const handleOpenTheme = async () => {
 			try {
-				// Use ipcRenderer.invoke to open VS Code
-				await ipcRenderer.invoke("external-theme-open-theme", site.id);
+				// Use ipcRenderer.invoke to open theme folder
+				const result = await ipcRenderer.invoke(
+					"external-theme-open-theme",
+					site.id,
+				);
+				if (!result.success) {
+					alert(`Failed to open theme folder: ${result.error}`);
+				}
 			} catch (error) {
 				alert(`Failed to open theme folder: ${error.message}`);
 			}
