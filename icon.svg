@@ -1,23 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="152.278" height="121.791" viewBox="0 0 152.278 121.791">
-    <defs>
-        <style>
-            .cls-2{fill:none;stroke:#fcfeff;stroke-linecap:round;stroke-linejoin:round;stroke-width:6px}.cls-3{fill:#fff}
-        </style>
-    </defs>
-    <g id="Group_16407" data-name="Group 16407" transform="translate(-173 -126)">
-        <g id="Group_16406" data-name="Group 16406" transform="translate(-.222 -6)">
-            <g id="Group_16403" data-name="Group 16403" transform="translate(6268.221 2688)">
-                <path id="Path_7086" fill="#419564" d="M214.727 521.613a9.9 9.9 0 0 0-10.457 10.629l2.433 43.516c.338 6.086.241 11.067-.219 11.067h-25.2a11.119 11.119 0 0 1-11.084-11.086v-70.467a11.119 11.119 0 0 1 11.086-11.086h99.327a11.119 11.119 0 0 1 11.087 11.086V523.7c0 .532-4.986.768-11.078.527z" data-name="Path 7086" transform="translate(-6265.196 -3050.186)"/>
-                <g id="Group_16400" data-name="Group 16400" transform="translate(-5978.98 -2470.468)">
-                    <path id="Line_441" d="M0 0L0 33.259" class="cls-2" data-name="Line 441" transform="translate(16.629)"/>
-                    <path id="Line_442" d="M33.259 0L0 0" class="cls-2" data-name="Line 442" transform="translate(0 16.629)"/>
-                </g>
-                <path id="Path_7087" d="M248.792 591.967h-66.526v-88.044H292.7v43.263" class="cls-2" data-name="Path 7087" transform="translate(-6242.813 -3031.937)"/>
-                <path id="Line_443" d="M0 0L108.436 0" class="cls-2" data-name="Line 443" transform="translate(-6058.547 -2501.462)"/>
-            </g>
-        </g>
-        <circle id="Ellipse_3396" cx="4" cy="4" r="4" class="cls-3" data-name="Ellipse 3396" transform="translate(232 164)"/>
-        <circle id="Ellipse_3397" cx="4" cy="4" r="4" class="cls-3" data-name="Ellipse 3397" transform="translate(218 164)"/>
-        <circle id="Ellipse_3398" cx="4" cy="4" r="4" class="cls-3" data-name="Ellipse 3398" transform="translate(246 164)"/>
-    </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 152.28 121.79">
+  <!-- Generator: Adobe Illustrator 29.8.4, SVG Export Plug-In . SVG Version: 2.1.1 Build 6)  -->
+  <defs>
+    <linearGradient id="linear-gradient" x1="71.69" y1="67.98" x2="118.96" y2="17.1" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e6a095"/>
+      <stop offset="1" stop-color="#ff8e7d"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient1" x1="34.2" y1="93.34" x2="92.9" y2="56.22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9b9fcc"/>
+      <stop offset="1" stop-color="#c3c6ff"/>
+    </linearGradient>
+  </defs>
+  <path d="M144.32,80.2c-4.29-4.29-9.44-6.43-15.46-6.43s-11.17,2.14-15.46,6.43c-4.29,4.29-6.43,9.44-6.43,15.46s2.14,11.17,6.43,15.46c4.29,4.29,9.44,6.43,15.46,6.43s11.17-2.14,15.46-6.43c4.29-4.29,6.43-9.44,6.43-15.46s-2.14-11.17-6.43-15.46ZM136.59,103.39c-2.14,2.14-4.72,3.22-7.73,3.22s-5.59-1.07-7.73-3.22-3.22-4.72-3.22-7.73,1.07-5.59,3.22-7.73,4.72-3.22,7.73-3.22,5.59,1.07,7.73,3.22c2.14,2.14,3.22,4.72,3.22,7.73s-1.07,5.59-3.22,7.73Z" fill="#f3de8a"/>
+  <path d="M38.88,10.67c-4.29-4.29-9.44-6.43-15.46-6.43s-11.17,2.14-15.46,6.43C3.67,14.96,1.52,20.11,1.52,26.13s2.14,11.17,6.43,15.46c4.29,4.29,9.44,6.43,15.46,6.43s11.17-2.14,15.46-6.43c4.29-4.29,6.43-9.44,6.43-15.46s-2.14-11.17-6.43-15.46ZM31.15,33.86c-2.14,2.14-4.72,3.22-7.73,3.22s-5.59-1.07-7.73-3.22-3.22-4.72-3.22-7.73,1.07-5.59,3.22-7.73,4.72-3.22,7.73-3.22,5.59,1.07,7.73,3.22,3.22,4.72,3.22,7.73-1.07,5.59-3.22,7.73Z" fill="#7baf8b"/>
+  <path d="M96.06,21.98c5.36-5.36,14.05-5.36,19.41,0,5.36,5.36,5.36,14.05,0,19.41l-20.59,20.59c-5.36,5.36-14.05,5.36-19.41,0-2.68-2.68-7.02-2.68-9.7,0-2.68,2.68-2.68,7.02,0,9.7,10.72,10.72,28.1,10.72,38.82,0l20.59-20.59c10.72-10.72,10.72-28.1,0-38.82-10.72-10.72-28.1-10.72-38.82,0l-10.29,10.29c-2.68,2.68-2.68,7.02,0,9.7,2.68,2.68,7.02,2.68,9.7,0l10.29-10.29Z" fill="url(#linear-gradient)" fill-rule="evenodd"/>
+  <path d="M61.75,56.29c5.36-5.36,14.05-5.36,19.41,0,2.68,2.68,7.02,2.68,9.7,0,2.68-2.68,2.68-7.02,0-9.7-10.72-10.72-28.1-10.72-38.82,0l-20.59,20.59c-10.72,10.72-10.72,28.1,0,38.82,10.72,10.72,28.1,10.72,38.82,0l10.29-10.29c2.68-2.68,2.68-7.02,0-9.7-2.68-2.68-7.02-2.68-9.7,0l-10.29,10.29c-5.36,5.36-14.05,5.36-19.41,0-5.36-5.36-5.36-14.05,0-19.41l20.59-20.59Z" fill="url(#linear-gradient1)" fill-rule="evenodd"/>
 </svg>

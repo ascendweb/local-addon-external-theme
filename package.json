@@ -2,11 +2,11 @@
 	"name": "external-theme",
 	"productName": "External Theme",
 	"version": "1.0.0",
-	"author": "Ascend Digital Agency",
+	"author": "Ascend Digital Experts",
 	"keywords": [
 		"local-addon"
 	],
-	"bgColor": "#51bb7b",
+	"bgColor": "#181b35",
 	"icon": "icon.svg",
 	"slug": "external-theme",
 	"description": "Easily symlink an external theme into your Local site.",
@@ -14,10 +14,10 @@
 	"main": "lib/main.js",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/getflywheel/local-addon-boilerplate"
+		"url": "https://github.com/ascendweb/local-addon-external-theme"
 	},
 	"bugs": {
-		"url": "https://github.com/getflywheel/local-addon-boilerplate/issues"
+		"url": "https://github.com/ascendweb/local-addon-external-theme/issues"
 	},
 	"license": "MIT",
 	"scripts": {
