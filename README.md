@@ -1,26 +1,24 @@
 # External Themes Add-on
 
-A Local by Flywheel add-on that allows you to link external theme folders to your WordPress sites using symbolic links. Perfect for theme developers who want to work on themes outside of the WordPress installation while keeping them synchronized.
+A Local add-on that allows you to add external theme folders to your WordPress sites using symbolic links. This keeps your theme code out of the Local environment ensuring it never gets overwitten when pulling changes. Perfect for cloning theme repositories from Git into a different folder, especially if the production theme code is different from development such as when using automation to bundle the theme.
 
 ## Features
 
-- **🔗 Symbolic Link Integration**: Creates symbolic links between external theme folders and WordPress themes directory
-- **📁 Theme Selection**: Easy folder picker to select your external theme directory
-- **🔄 One-Click Sync**: Instantly sync your external theme to any WordPress site
-- **💻 Developer Tools**: 
-  - Open theme folder in VS Code
-  - Open theme folder in native file explorer
-  - Auto-activation with WP-CLI (optional)
-- **🌐 Cross-Platform**: Works on Windows, macOS, and Linux
-- **⚡ Live Development**: Changes to external theme files are immediately reflected in WordPress
-- **🚀 Deployment Safe**: Symbolic links prevent theme files from being uploaded during deployment
+- **🔗 Symbolic Link**: Creates symbolic links between external theme folders and WordPress themes directory.
+- **📁 Theme Picker**: Easy folder picker to select your external theme directory.
+- **🔄 Relink**: Button to manually recreate the symbolic link should it get deleted.
+- **⚡ Auto Link**: Every pull in Local triggers the link to be recreated and auto activates the theme.
+- **💻 Developer Tools**:
+    - Open theme folder in VS Code
+    - Open theme folder in native file explorer
 
 ## How It Works
 
-1. **Select Theme**: Choose an external theme folder from anywhere on your computer
-2. **Sync to Site**: Create a symbolic link in your WordPress site's themes directory
-3. **Develop**: Edit theme files in your preferred location and see changes instantly
-4. **Deploy**: Symbolic links ensure theme files stay local and don't get uploaded
+1. Click the "Select Theme" button and choose your theme folder.
+2. It will automatically link the theme to the site and activate the theme.
+3. On every Local "Pull" it will fix the link and reactivate the theme.
+4. Relink button incase you need to quickly manually recreate the symlink.
+5. Easily work on your theme with the open in VS Code button.
 
 ## Use Cases
 
@@ -29,29 +27,27 @@ A Local by Flywheel add-on that allows you to link external theme folders to you
 - **Multi-Site Development**: Use the same theme across multiple Local sites
 - **Backup Safety**: Theme files stay in your preferred backup location
 
-
-
 ## Installation
 
 ### Add Add-on to Local
 
 1. Clone repo directly into the add-ons folder (paths described above)
 2. `npm install` (install dependencies)
-2. `npm run watch`
-3. Open Local and enable add-on
+3. `npm run watch`
+4. Open Local and enable add-on
 
 ## Development
 
 ### External Libraries
 
 - @getflywheel/local provides type definitions for Local's Add-on API.
-	- Node Module: https://www.npmjs.com/package/@getflywheel/local-components
-	- GitHub Repo: https://github.com/getflywheel/local-components
+    - Node Module: https://www.npmjs.com/package/@getflywheel/local-components
+    - GitHub Repo: https://github.com/getflywheel/local-components
 
 - @getflywheel/local-components provides reusable React components to use in your Local add-on.
-	- Node Module: https://www.npmjs.com/package/@getflywheel/local
-	- GitHub Repo: https://github.com/getflywheel/local-addon-api
-	- Style Guide: https://getflywheel.github.io/local-components
+    - Node Module: https://www.npmjs.com/package/@getflywheel/local
+    - GitHub Repo: https://github.com/getflywheel/local-addon-api
+    - Style Guide: https://getflywheel.github.io/local-components
 
 ### Folder Structure
 
