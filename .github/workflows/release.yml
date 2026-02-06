@@ -20,8 +20,10 @@ jobs:
       - name: Build Addon
         run: npm run build
 
-      - name: Prune dev dependencies
-        run: npm prune --production
+      - name: Clean and reinstall production dependencies
+        run: |
+          rm -rf node_modules package-lock.json
+          npm ci --omit=dev
 
       - name: Create addon tarball
         run: |
