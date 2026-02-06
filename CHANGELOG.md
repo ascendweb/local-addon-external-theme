@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.2](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.1...1.1.2) (2026-02-06)
+
+### Bug Fixes
+
+* should keep required dependencies now ([ff15f77](https://github.com/ascendweb/local-addon-external-theme/commit/ff15f772bdfca2ea5068c246de034ea8480140e1))
+
 ## [1.1.1](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.0...1.1.1) (2026-02-06)
 
 ### Bug Fixes
