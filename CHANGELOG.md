@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.4](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.3...1.1.4) (2026-02-06)
+
+### Bug Fixes
+
+* dont run prepare on final npm install ([1c0981b](https://github.com/ascendweb/local-addon-external-theme/commit/1c0981bf7781d165d13d439f6dd87dda9ab8a4dc))
+
 ## [1.1.3](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.2...1.1.3) (2026-02-06)
 
 ### Bug Fixes
