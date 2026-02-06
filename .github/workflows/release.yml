@@ -1,0 +1,43 @@
+name: Release Addon
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  build:
+    name: 'Build Local Addon'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install NPM Dependencies
+        run: npm ci
+
+      - name: Build Addon
+        run: npm run build
+
+      - name: Create addon tarball
+        run: |
+          FOLDER="local-addon-external-theme"
+          TMP_DIR="${FOLDER}_tmp"
+          PACKAGE_DIR="$TMP_DIR/package"
+          rm -rf "$TMP_DIR"
+          mkdir -p "$PACKAGE_DIR"
+          rsync -a --exclude-from=.distignore --exclude="$TMP_DIR"/ ./ "$PACKAGE_DIR"/
+          TAR_FILE="${FOLDER}_${{ github.ref_name }}.tar.gz"
+          # Create tarball containing a top-level "package/" directory
+          tar -czf "$TAR_FILE" -C "$TMP_DIR" package
+          rm -rf "$TMP_DIR"
+          echo "TAR_FILE=$TAR_FILE" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: ${{ env.TAR_FILE }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
