@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.3](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.2...1.1.3) (2026-02-06)
+
+### Bug Fixes
+
+* dont remove package-lock in release ([3821b79](https://github.com/ascendweb/local-addon-external-theme/commit/3821b79ac3cf0575d3cba80699d8e36b68d44149))
+
 ## [1.1.2](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.1...1.1.2) (2026-02-06)
 
 ### Bug Fixes
