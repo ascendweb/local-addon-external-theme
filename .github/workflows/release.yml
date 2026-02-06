@@ -22,7 +22,7 @@ jobs:
 
       - name: Clean and reinstall production dependencies
         run: |
-          rm -rf node_modules package-lock.json
+          rm -rf node_modules
           npm ci --omit=dev
 
       - name: Create addon tarball
