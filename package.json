@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@getflywheel/local": "^9",
+    "@release-it/conventional-changelog": "^10.0.5",
     "@types/classnames": "^2.2.9",
     "@types/dateformat": "^3.0.1",
     "@types/react": "^18.2.24",
