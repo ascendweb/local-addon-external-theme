@@ -31,9 +31,18 @@ A Local add-on that allows you to add external theme folders to your WordPress s
 
 ## Installation
 
+### Local Add-on Directory
+Add-on directories must be placed or linked into the Local add-ons directory to appear within the Local application. The generator will create a symlink in the Local add-ons directory pointing to your add-on by default; if you skip this step, you will need to link the directory manually.
+
+### Local add-on directories:
+
+macOS: ~/Library/Application Support/Local/addons
+Windows: C:\Users\username\AppData\Roaming\Local\addons
+Debian Linux: ~/.config/Local/addons
+
 ### Add Add-on to Local
 
-1. Clone repo directly into the add-ons folder (paths described above)
+1. Clone repo either into the addon path or symlink it
 2. `npm install` (install dependencies)
 3. `npm run dev`
 4. Open Local and enable add-on

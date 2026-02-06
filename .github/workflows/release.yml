@@ -20,6 +20,9 @@ jobs:
       - name: Build Addon
         run: npm run build
 
+      - name: Prune dev dependencies
+        run: npm prune --production
+
       - name: Create addon tarball
         run: |
           FOLDER="local-addon-external-theme"
