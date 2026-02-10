@@ -1,18 +1,27 @@
 # External Themes Add-on
 
-A Local add-on that allows you to add external theme folders to your WordPress sites using symbolic links. This keeps your theme code out of the Local environment ensuring it never gets overwitten when pulling changes. Perfect for cloning theme repositories from Git into a different folder, especially if the production theme code is different from development such as when using automation to bundle the theme.
+A Local add-on that allows you to add external theme folders to your WordPress
+sites using symbolic links. This keeps your theme code out of the Local
+environment ensuring it never gets overwitten when pulling changes. Perfect for
+cloning theme repositories from Git into a different folder, especially if the
+production theme code is different from development such as when using
+automation to bundle the theme.
 
 ![External Theme Add-on Screenshot](assets/example.png)
 
 ## Features
 
-- **🔗 Symbolic Link**: Creates symbolic links between external theme folders and WordPress themes directory.
-- **📁 Theme Picker**: Easy folder picker to select your external theme directory.
-- **🔄 Relink**: Button to manually recreate the symbolic link should it get deleted.
-- **⚡ Auto Link**: Every pull in Local triggers the link to be recreated and auto activates the theme.
+- **🔗 Symbolic Link**: Creates symbolic links between external theme folders
+  and WordPress themes directory.
+- **📁 Theme Picker**: Easy folder picker to select your external theme
+  directory.
+- **🔄 Relink**: Button to manually recreate the symbolic link should it get
+  deleted.
+- **⚡ Auto Link**: Every pull in Local triggers the link to be recreated and
+  auto activates the theme.
 - **💻 Developer Tools**:
-    - Open theme folder in VS Code
-    - Open theme folder in native file explorer
+  - Open theme folder in VS Code
+  - Open theme folder in native file explorer
 
 ## How It Works
 
@@ -24,21 +33,27 @@ A Local add-on that allows you to add external theme folders to your WordPress s
 
 ## Use Cases
 
-- **Theme Development**: Work on themes in a centralized location outside of WordPress
-- **Version Control**: Keep themes in Git repositories separate from WordPress sites
+- **Theme Development**: Work on themes in a centralized location outside of
+  WordPress
+- **Version Control**: Keep themes in Git repositories separate from WordPress
+  sites
 - **Multi-Site Development**: Use the same theme across multiple Local sites
 - **Backup Safety**: Theme files stay in your preferred backup location
 
 ## Installation
 
 ### Local Add-on Directory
-Add-on directories must be placed or linked into the Local add-ons directory to appear within the Local application. The generator will create a symlink in the Local add-ons directory pointing to your add-on by default; if you skip this step, you will need to link the directory manually.
+
+Add-on directories must be placed or linked into the Local add-ons directory to
+appear within the Local application. The generator will create a symlink in the
+Local add-ons directory pointing to your add-on by default; if you skip this
+step, you will need to link the directory manually.
 
 ### Local add-on directories:
 
-macOS: ~/Library/Application Support/Local/addons
-Windows: C:\Users\username\AppData\Roaming\Local\addons
-Debian Linux: ~/.config/Local/addons
+- macOS: ~/Library/Application Support/Local/addons
+- Windows: %appdata%\Local\addons
+- Debian Linux: ~/.config/Local/addons
 
 ### Add Add-on to Local
 
@@ -52,23 +67,29 @@ Debian Linux: ~/.config/Local/addons
 ### External Libraries
 
 - @getflywheel/local provides type definitions for Local's Add-on API.
-    - Node Module: https://www.npmjs.com/package/@getflywheel/local-components
-    - GitHub Repo: https://github.com/getflywheel/local-components
+  - Node Module: https://www.npmjs.com/package/@getflywheel/local-components
+  - GitHub Repo: https://github.com/getflywheel/local-components
 
-- @getflywheel/local-components provides reusable React components to use in your Local add-on.
-    - Node Module: https://www.npmjs.com/package/@getflywheel/local
-    - GitHub Repo: https://github.com/getflywheel/local-addon-api
-    - Style Guide: https://getflywheel.github.io/local-components
+- @getflywheel/local-components provides reusable React components to use in
+  your Local add-on.
+  - Node Module: https://www.npmjs.com/package/@getflywheel/local
+  - GitHub Repo: https://github.com/getflywheel/local-addon-api
+  - Style Guide: https://getflywheel.github.io/local-components
 
 ### Folder Structure
 
-All files in `/src` will be transpiled to `/lib` using [TypeScript](https://www.typescriptlang.org/). Anything in `/lib` will be overwritten.
+All files in `/src` will be transpiled to `/lib` using
+[TypeScript](https://www.typescriptlang.org/). Anything in `/lib` will be
+overwritten.
 
 ### Development Workflow
 
-If you are looking for help getting started, you can consult [the documentation for the add-on generator](https://github.com/getflywheel/create-local-addon#next-steps).
+If you are looking for help getting started, you can consult
+[the documentation for the add-on generator](https://github.com/getflywheel/create-local-addon#next-steps).
 
-You can consult the [Local add-on API](https://getflywheel.github.io/local-addon-api), which provides a wide range of values and functions for developing your add-on.
+You can consult the
+[Local add-on API](https://getflywheel.github.io/local-addon-api), which
+provides a wide range of values and functions for developing your add-on.
 
 ## License
 

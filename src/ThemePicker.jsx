@@ -1,151 +1,144 @@
-import React, { Component, useEffect } from "react";
-import { ipcRenderer } from "electron";
+import React, { Component, useEffect } from 'react';
+import { ipcRenderer } from 'electron';
 
 // https://getflywheel.github.io/local-addon-api/modules/_local_renderer_.html
-import * as LocalRenderer from "@getflywheel/local/renderer";
+import * as LocalRenderer from '@getflywheel/local/renderer';
 
 // https://github.com/getflywheel/local-components
 import {
-	Button,
-	toast,
-	FlyModal,
-	Title,
-	Text,
-	TextButton,
-	FileFolderOpenedIcon,
-	RefreshButton,
-	VSIcon,
-	CaretDoubleIcon,
-	CircleInfoIcon,
-	Tooltip,
-} from "@getflywheel/local-components";
+  Button,
+  toast,
+  FlyModal,
+  Title,
+  Text,
+  TextButton,
+  FileFolderOpenedIcon,
+  RefreshButton,
+  VSIcon,
+  CaretDoubleIcon,
+  CircleInfoIcon,
+  Tooltip,
+} from '@getflywheel/local-components';
 
 export default class ThemePicker extends Component {
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.props = props;
-		this.themeName = props.themePath
-			? props.themePath.split("\\").pop() ||
-				props.themePath.split("/").pop()
-			: "";
-	}
+    this.props = props;
+    this.themeName = props.themePath
+      ? props.themePath.split('\\').pop() || props.themePath.split('/').pop()
+      : '';
+  }
 
-	renderPickThemeButton() {
-		return (
-			<TextButton
-				onClick={this.props.onPick}
-				className="external-theme-button external-theme-pick-button"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					height="18px"
-					viewBox="0 -960 960 960"
-					width="18px"
-					fill="currentColor"
-					style={{ display: "block " }}
-				>
-					<path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-177 23q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm120-160q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm200 0q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm120 160q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z" />
-				</svg>
-				{this.hasSelectedTheme() ? "Change" : "Select"}
-			</TextButton>
-		);
-	}
+  renderPickThemeButton() {
+    return (
+      <TextButton
+        onClick={this.props.onPick}
+        className='external-theme-button external-theme-pick-button'
+      >
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          height='18px'
+          viewBox='0 -960 960 960'
+          width='18px'
+          fill='currentColor'
+          style={{ display: 'block ' }}
+        >
+          <path d='M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-177 23q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm120-160q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm200 0q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm120 160q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z' />
+        </svg>
+        {this.hasSelectedTheme() ? 'Change' : 'Select'}
+      </TextButton>
+    );
+  }
 
-	renderVSCodeButton() {
-		return (
-			<TextButton
-				onClick={this.props.onOpenVSCode}
-				className="external-theme-button external-theme-vscode-button"
-			>
-				<VSIcon />
-				VS Code
-			</TextButton>
-		);
-	}
+  renderVSCodeButton() {
+    return (
+      <TextButton
+        onClick={this.props.onOpenVSCode}
+        className='external-theme-button external-theme-vscode-button'
+      >
+        <VSIcon />
+        VS Code
+      </TextButton>
+    );
+  }
 
-	renderRelinkButton() {
-		return (
-			<RefreshButton
-				onClick={this.props.onSync}
-				className="external-theme-button external-theme-sync-button"
-			>
-				<div>Relink</div>
-			</RefreshButton>
-		);
-	}
+  renderRelinkButton() {
+    return (
+      <RefreshButton
+        onClick={this.props.onSync}
+        className='external-theme-button external-theme-sync-button'
+      >
+        <div>Relink</div>
+      </RefreshButton>
+    );
+  }
 
-	renderOpenFolderButton() {
-		return (
-			<TextButton
-				onClick={this.props.onOpenFolder}
-				className="external-theme-button external-theme-open-button"
-			>
-				<FileFolderOpenedIcon />
-				<div>Open</div>
-			</TextButton>
-		);
-	}
+  renderOpenFolderButton() {
+    return (
+      <TextButton
+        onClick={this.props.onOpenFolder}
+        className='external-theme-button external-theme-open-button'
+      >
+        <FileFolderOpenedIcon />
+        <div>Open</div>
+      </TextButton>
+    );
+  }
 
-	renderThemeName() {
-		return (
-			<div style={{ display: "contents" }}>
-				<span>
-					{this.hasSelectedTheme()
-						? this.themeName
-						: "No theme selected"}
-				</span>
-				<Tooltip
-					className="external-theme-tooltip"
-					content="Creates a symbolic link between the external theme folder and the local site."
-				>
-					<CircleInfoIcon
-						style={{ display: "block " }}
-					></CircleInfoIcon>
-				</Tooltip>
-			</div>
-		);
-	}
+  renderThemeName() {
+    return (
+      <div style={{ display: 'contents' }}>
+        <span>
+          {this.hasSelectedTheme() ? this.themeName : 'No theme selected'}
+        </span>
+        <Tooltip
+          className='external-theme-tooltip'
+          content='Creates a symbolic link between the external theme folder and the local site.'
+        >
+          <CircleInfoIcon style={{ display: 'block ' }}></CircleInfoIcon>
+        </Tooltip>
+      </div>
+    );
+  }
 
-	hasSelectedTheme() {
-		return this.props.themePath ? true : false;
-	}
+  hasSelectedTheme() {
+    return this.props.themePath ? true : false;
+  }
 
-	render() {
-		const els = [this.renderPickThemeButton];
+  render() {
+    const els = [this.renderPickThemeButton];
 
-		if (this.hasSelectedTheme()) {
-			els.push(
-				this.renderRelinkButton,
-				this.renderOpenFolderButton,
-				this.renderVSCodeButton,
-			);
-		}
+    if (this.hasSelectedTheme()) {
+      els.push(
+        this.renderRelinkButton,
+        this.renderOpenFolderButton,
+        this.renderVSCodeButton,
+      );
+    }
 
-		els.push(this.renderThemeName);
+    els.push(this.renderThemeName);
 
-		// Create elements with dividers between them
-		const elementsWithDividers = els.map((renderFunc, index) => {
-			const element = renderFunc.call(this);
-			const isLast = index === els.length - 1;
+    // Create elements with dividers between them
+    const elementsWithDividers = els.map((renderFunc, index) => {
+      const element = renderFunc.call(this);
+      const isLast = index === els.length - 1;
 
-			return (
-				<React.Fragment key={index}>
-					{element}
-					{!isLast && <div className="group-divider"></div>}
-				</React.Fragment>
-			);
-		});
+      return (
+        <React.Fragment key={index}>
+          {element}
+          {!isLast && <div className='group-divider'></div>}
+        </React.Fragment>
+      );
+    });
 
-		return (
-			<li className="TableListRow external-theme-table-row">
-				<strong className="external-theme-label">External Theme</strong>
-				<div className="external-theme-container">
-					<div className="external-theme-inner">
-						{elementsWithDividers}
-					</div>
-				</div>
-			</li>
-		);
-	}
+    return (
+      <li className='TableListRow external-theme-table-row'>
+        <strong className='external-theme-label'>External Theme</strong>
+        <div className='external-theme-container'>
+          <div className='external-theme-inner'>{elementsWithDividers}</div>
+        </div>
+      </li>
+    );
+  }
 }

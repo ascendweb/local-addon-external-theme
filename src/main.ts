@@ -1,366 +1,298 @@
 // https://getflywheel.github.io/local-addon-api/modules/_local_main_.html
-import * as Local from "@getflywheel/local";
-import * as LocalMain from "@getflywheel/local/main";
-import * as path from "path";
-import * as fs from "fs-extra";
-import { exec, spawn } from "child_process";
-import { promisify } from "util";
+import * as Local from '@getflywheel/local';
+import * as LocalMain from '@getflywheel/local/main';
+import * as path from 'path';
+import * as fs from 'fs-extra';
+import { exec, spawn } from 'child_process';
+import { promisify } from 'util';
+import logger from './logger';
 
 const execAsync = promisify(exec);
 
+const { getServiceContainer } = LocalMain;
+
+const serviceContainer = getServiceContainer();
+
+const log = logger.child({
+  thread: 'main',
+  class: 'main.ts',
+});
+
 export default function (context: LocalMain.AddonMainContext): void {
-	// The context object allows us to interact with various parts of Electron's main thread.
-	const { electron, hooks } = context;
-	const { ipcMain, dialog } = electron;
+  // The context object allows us to interact with various parts of Electron's main thread.
+  const { electron } = context;
+  const { ipcMain, dialog } = electron;
 
-	const { localLogger, siteData } = LocalMain.getServiceContainer().cradle;
+  const { siteData } = LocalMain.getServiceContainer().cradle;
 
-	// Local uses Winston for logging which means we can create create child
-	// loggers with additional metadata. For example, the below child logger
-	// will log something like this within the Local log:
-	//
-	// {"thread":"main","addon":"external-theme","level":"info","message":"Picking theme for site 5efOKun5u.","timestamp":"2022-12-21T16:43:40.515Z"}
-	const logger = localLogger.child({
-		thread: "main",
-		addon: "external-theme",
-	});
+  LocalMain.HooksMain.addAction('siteStarted', (site) => {
+    log.info('Syncing site theme on start.');
+    syncTheme(site.id);
+  });
 
-	async function enableThemeWithWPCLI(siteId, themeName) {
-		try {
-			const site = siteData.getSite(siteId);
-			const wpPath = path.join(site.path, "app", "public");
+  async function enableThemeWithWPCLI(siteId, themeName) {
+    const { wpCli, errorHandler } = serviceContainer.cradle;
 
-			return new Promise((resolve, reject) => {
-				const wpCli = spawn(
-					"wp",
-					["theme", "activate", themeName, "--path=" + wpPath],
-					{
-						stdio: "pipe",
-					},
-				);
+    try {
+      const site = siteData.getSite(siteId);
+      wpCli.run(site, ['theme', 'activate', themeName]);
+    } catch (e) {
+      // Report the error to the user, the Local log, and Sentry.
+      errorHandler.handleError({
+        error: e,
+        message: 'error encountered during finalizeNewSite step',
+        dialogTitle: 'Uh-oh! Local ran into an error.',
+        dialogMessage: e.toString(),
+      });
+    }
+  }
 
-				wpCli.on("close", (code) => {
-					if (code === 0) {
-						logger.log(
-							"info",
-							`Theme ${themeName} activated via WP-CLI`,
-						);
-						resolve(true);
-					} else {
-						reject(new Error(`WP-CLI failed with code ${code}`));
-					}
-				});
+  async function openTheme(siteId) {
+    try {
+      log.info(`Opening theme folder for site ${siteId}.`);
 
-				wpCli.on("error", (error) => {
-					reject(error);
-				});
-			});
-		} catch (error) {
-			logger.log(
-				"error",
-				`WP-CLI theme activation failed: ${error.message}`,
-			);
-			throw error;
-		}
-	}
+      // Get site data to find the selected theme
+      const site = siteData.getSite(siteId);
+      const selectedTheme = (site as any)?.externalThemeAddon?.selectedTheme;
 
-	async function openTheme(siteId) {
-		try {
-			logger.log("info", `Opening theme folder for site ${siteId}.`);
+      if (!selectedTheme) {
+        log.error(`No theme selected for site ${siteId}.`);
+        return {
+          success: false,
+          error: 'No theme selected for this site.',
+        };
+      }
 
-			// Get site data to find the selected theme
-			const site = siteData.getSite(siteId);
-			const selectedTheme = (site as any)?.externalThemeAddon
-				?.selectedTheme;
+      // Check if the theme directory exists
+      if (!(await fs.pathExists(selectedTheme))) {
+        log.error(`Selected theme directory does not exist: ${selectedTheme}`);
+        return {
+          success: false,
+          error: `Selected theme directory does not exist: ${selectedTheme}`,
+        };
+      }
 
-			if (!selectedTheme) {
-				logger.log("error", `No theme selected for site ${siteId}.`);
-				return {
-					success: false,
-					error: "No theme selected for this site.",
-				};
-			}
+      // Open in native file explorer based on platform
+      let command: string;
 
-			// Check if the theme directory exists
-			if (!(await fs.pathExists(selectedTheme))) {
-				logger.log(
-					"error",
-					`Selected theme directory does not exist: ${selectedTheme}`,
-				);
-				return {
-					success: false,
-					error: `Selected theme directory does not exist: ${selectedTheme}`,
-				};
-			}
+      if (process.platform === 'win32') {
+        // Windows - use explorer
+        command = `explorer "${selectedTheme}"`;
+      } else if (process.platform === 'darwin') {
+        // macOS - use open
+        command = `open "${selectedTheme}"`;
+      } else {
+        // Linux - use xdg-open
+        command = `xdg-open "${selectedTheme}"`;
+      }
 
-			// Open in native file explorer based on platform
-			let command: string;
+      exec(command);
+      log.error(`Opened theme folder: ${selectedTheme}`);
 
-			if (process.platform === "win32") {
-				// Windows - use explorer
-				command = `explorer "${selectedTheme}"`;
-			} else if (process.platform === "darwin") {
-				// macOS - use open
-				command = `open "${selectedTheme}"`;
-			} else {
-				// Linux - use xdg-open
-				command = `xdg-open "${selectedTheme}"`;
-			}
+      return { success: true };
+    } catch (error) {
+      log.error(`Error opening theme folder for site ${siteId}:`, error);
+      return { success: false, error: error.message };
+    }
+  }
 
-			exec(command);
-			logger.log("info", `Opened theme folder: ${selectedTheme}`);
+  async function syncTheme(siteId) {
+    try {
+      // Get site data to find the selected theme and site path
+      const site = siteData.getSite(siteId);
+      const selectedTheme = (site as any)?.externalThemeAddon?.selectedTheme;
 
-			return { success: true };
-		} catch (error) {
-			logger.log(
-				"error",
-				`Error opening theme folder for site ${siteId}:`,
-				error,
-			);
-			return { success: false, error: error.message };
-		}
-	}
+      if (!selectedTheme) {
+        log.error(`No theme selected for site ${siteId}.`);
+        return {
+          success: false,
+          error: 'No theme selected for this site.',
+        };
+      }
 
-	async function syncTheme(siteId) {
-		try {
-			logger.log("info", `Syncing theme for site ${siteId}.`);
+      if (!site?.path) {
+        log.error(`Site path not found for site ${siteId}.`);
+        return { success: false, error: 'Site path not found.' };
+      }
 
-			// Get site data to find the selected theme and site path
-			const site = siteData.getSite(siteId);
-			const selectedTheme = (site as any)?.externalThemeAddon
-				?.selectedTheme;
+      // Construct the WordPress themes directory path
+      const wpThemesDir = path.join(
+        site.path,
+        'app',
+        'public',
+        'wp-content',
+        'themes',
+      );
+      const themeName = path.basename(selectedTheme);
+      const symlinkPath = path.join(wpThemesDir, themeName);
 
-			if (!selectedTheme) {
-				logger.log("error", `No theme selected for site ${siteId}.`);
-				return {
-					success: false,
-					error: "No theme selected for this site.",
-				};
-			}
+      // Check if the source theme directory exists
+      if (!(await fs.pathExists(selectedTheme))) {
+        log.error(`Selected theme directory does not exist: ${selectedTheme}`);
+        return {
+          success: false,
+          error: `Selected theme directory does not exist: ${selectedTheme}`,
+        };
+      }
 
-			if (!site?.path) {
-				logger.log("error", `Site path not found for site ${siteId}.`);
-				return { success: false, error: "Site path not found." };
-			}
+      // Check if WordPress themes directory exists
+      if (!(await fs.pathExists(wpThemesDir))) {
+        log.error(`WordPress themes directory does not exist: ${wpThemesDir}`);
+        return {
+          success: false,
+          error: `WordPress themes directory does not exist: ${wpThemesDir}`,
+        };
+      }
 
-			// Construct the WordPress themes directory path
-			const wpThemesDir = path.join(
-				site.path,
-				"app",
-				"public",
-				"wp-content",
-				"themes",
-			);
-			const themeName = path.basename(selectedTheme);
-			const symlinkPath = path.join(wpThemesDir, themeName);
+      // Remove existing symlink or directory if it exists
+      if (await fs.pathExists(symlinkPath)) {
+        await fs.unlink(symlinkPath);
+        log.info(`Removed existing file: ${symlinkPath}`);
+      }
 
-			// Check if the source theme directory exists
-			if (!(await fs.pathExists(selectedTheme))) {
-				logger.log(
-					"error",
-					`Selected theme directory does not exist: ${selectedTheme}`,
-				);
-				return {
-					success: false,
-					error: `Selected theme directory does not exist: ${selectedTheme}`,
-				};
-			}
+      // Create directory symbolic link (required for proper deployment behavior)
+      await fs.symlink(selectedTheme, symlinkPath, 'dir');
+      log.info(
+        `Created directory symlink from ${selectedTheme} to ${symlinkPath}`,
+      );
 
-			// Check if WordPress themes directory exists
-			if (!(await fs.pathExists(wpThemesDir))) {
-				logger.log(
-					"error",
-					`WordPress themes directory does not exist: ${wpThemesDir}`,
-				);
-				return {
-					success: false,
-					error: `WordPress themes directory does not exist: ${wpThemesDir}`,
-				};
-			}
+      // Update site data to track sync status
+      siteData.updateSite(siteId, {
+        id: siteId,
+        externalThemeAddon: {
+          ...(site as any).externalThemeAddon,
+          syncedAt: new Date().toISOString(),
+          symlinkPath: symlinkPath,
+        },
+      } as Partial<Local.SiteJSON>);
 
-			// Remove existing symlink or directory if it exists
-			if (await fs.pathExists(symlinkPath)) {
-				await fs.unlink(symlinkPath);
-				logger.log("info", `Removed existing file: ${symlinkPath}`);
-			}
+      try {
+        await enableThemeWithWPCLI(siteId, themeName);
+        // Or use: await enableTheme(siteId, themeName);
+      } catch (error) {
+        log.warn(`Could not auto-activate theme: ${error.message}`);
+        // Don't throw - symlink creation succeeded, theme activation is optional
+      }
 
-			// Create directory symbolic link (required for proper deployment behavior)
-			await fs.symlink(selectedTheme, symlinkPath, "dir");
-			logger.log(
-				"info",
-				`Created directory symlink from ${selectedTheme} to ${symlinkPath}`,
-			);
+      log.info(`Theme synced successfully for site ${siteId}.`);
+      return { success: true };
+    } catch (error) {
+      log.error(`Error syncing theme for site ${siteId}:`, error);
 
-			// Update site data to track sync status
-			siteData.updateSite(siteId, {
-				id: siteId,
-				externalThemeAddon: {
-					...(site as any).externalThemeAddon,
-					syncedAt: new Date().toISOString(),
-					symlinkPath: symlinkPath,
-				},
-			} as Partial<Local.SiteJSON>);
+      // Enhanced error message for Windows Developer Mode
+      if (process.platform === 'win32' && (error as any)?.code === 'EPERM') {
+        return {
+          success: false,
+          error: `Directory symlink creation failed.\n\nOn Windows, enable Developer Mode:\n1. Go to Settings → Update & Security → For developers\n2. Turn on "Developer Mode"\n3. Restart Local\n\nThis ensures your theme files won't be uploaded during deployment.`,
+        };
+      }
 
-			try {
-				await enableThemeWithWPCLI(siteId, themeName);
-				// Or use: await enableTheme(siteId, themeName);
-			} catch (error) {
-				logger.log(
-					"warn",
-					`Could not auto-activate theme: ${error.message}`,
-				);
-				// Don't throw - symlink creation succeeded, theme activation is optional
-			}
+      return { success: false, error: error.message };
+    }
+  }
 
-			logger.log("info", `Theme synced successfully for site ${siteId}.`);
-			return { success: true };
-		} catch (error) {
-			logger.log(
-				"error",
-				`Error syncing theme for site ${siteId}:`,
-				error,
-			);
+  // Handle theme picking
+  ipcMain.on('external-theme-pick-theme', async (event, siteId) => {
+    try {
+      log.info(`Picking theme for site ${siteId}.`);
 
-			// Enhanced error message for Windows Developer Mode
-			if (
-				process.platform === "win32" &&
-				(error as any)?.code === "EPERM"
-			) {
-				return {
-					success: false,
-					error: `Directory symlink creation failed.\n\nOn Windows, enable Developer Mode:\n1. Go to Settings → Update & Security → For developers\n2. Turn on "Developer Mode"\n3. Restart Local\n\nThis ensures your theme files won't be uploaded during deployment.`,
-				};
-			}
+      // Open a file dialog to select a theme zip file
+      const result = await dialog.showOpenDialog({
+        title: 'Select Theme Folder',
+        properties: ['openDirectory'],
+      });
 
-			return { success: false, error: error.message };
-		}
-	}
+      if (!result.canceled && result.filePaths.length > 0) {
+        const themePath = result.filePaths[0];
+        log.info(`Selected theme: ${themePath} for site ${siteId}.`);
 
-	// Auto sync after site
-	hooks.addAction("siteCloned", async (site) => {
-		syncTheme(site.id);
-	});
+        // Store the selected theme path in site data
+        siteData.updateSite(siteId, {
+          id: siteId,
+          externalThemeAddon: {
+            selectedTheme: themePath,
+            lastUpdated: new Date().toISOString(),
+          },
+        } as Partial<Local.SiteJSON>);
 
-	// Handle theme picking
-	ipcMain.on("external-theme-pick-theme", async (event, siteId) => {
-		try {
-			logger.log("info", `Picking theme for site ${siteId}.`);
+        // TODO: Add logic here to install/apply the theme
+        // This could include extracting the zip file to the WordPress themes directory
 
-			// Open a file dialog to select a theme zip file
-			const result = await dialog.showOpenDialog({
-				title: "Select Theme Folder",
-				properties: ["openDirectory"],
-			});
+        log.info(`Theme selection saved for site ${siteId}.`);
+      }
+    } catch (error) {
+      log.error(`Error picking theme for site ${siteId}:`, error);
+    }
+  });
 
-			if (!result.canceled && result.filePaths.length > 0) {
-				const themePath = result.filePaths[0];
-				logger.log(
-					"info",
-					`Selected theme: ${themePath} for site ${siteId}.`,
-				);
+  // Handle theme syncing
+  ipcMain.handle('external-theme-sync-theme', (event, siteId) =>
+    syncTheme(siteId),
+  );
 
-				// Store the selected theme path in site data
-				siteData.updateSite(siteId, {
-					id: siteId,
-					externalThemeAddon: {
-						selectedTheme: themePath,
-						lastUpdated: new Date().toISOString(),
-					},
-				} as Partial<Local.SiteJSON>);
+  // Handle open theme directory
+  ipcMain.handle('external-theme-open-theme', (event, siteId) =>
+    openTheme(siteId),
+  );
 
-				// TODO: Add logic here to install/apply the theme
-				// This could include extracting the zip file to the WordPress themes directory
+  // Handle opening theme folder in VS Code
+  ipcMain.handle('external-theme-open-vscode', async (event, siteId) => {
+    try {
+      log.info(`Opening VS Code for site ${siteId}.`);
 
-				logger.log("info", `Theme selection saved for site ${siteId}.`);
-			}
-		} catch (error) {
-			logger.log(
-				"error",
-				`Error picking theme for site ${siteId}:`,
-				error,
-			);
-		}
-	});
+      // Get site data to find the selected theme
+      const site = siteData.getSite(siteId);
+      const selectedTheme = (site as any)?.externalThemeAddon?.selectedTheme;
 
-	// Handle theme syncing
-	ipcMain.handle("external-theme-sync-theme", (event, siteId) =>
-		syncTheme(siteId),
-	);
+      if (!selectedTheme) {
+        log.error(`No theme selected for site ${siteId}.`);
+        return {
+          success: false,
+          error: 'No theme selected for this site.',
+        };
+      }
 
-	// Handle open theme directory
-	ipcMain.handle("external-theme-open-theme", (event, siteId) =>
-		openTheme(siteId),
-	);
+      // Check if the theme directory exists
+      if (!(await fs.pathExists(selectedTheme))) {
+        log.error(`Selected theme directory does not exist: ${selectedTheme}`);
+        return {
+          success: false,
+          error: `Selected theme directory does not exist: ${selectedTheme}`,
+        };
+      }
 
-	// Handle opening theme folder in VS Code
-	ipcMain.handle("external-theme-open-vscode", async (event, siteId) => {
-		try {
-			logger.log("info", `Opening VS Code for site ${siteId}.`);
+      // Try to open in VS Code
+      try {
+        await execAsync(`code "${selectedTheme}"`);
+        log.info(`Opened ${selectedTheme} in VS Code.`);
+        return { success: true };
+      } catch (execError) {
+        // Fallback: try with full path to code executable
+        const codePaths = [
+          '"%LOCALAPPDATA%\\Programs\\Microsoft VS Code\\Code.exe"',
+          '"C:\\Program Files\\Microsoft VS Code\\Code.exe"',
+          '"C:\\Program Files (x86)\\Microsoft VS Code\\Code.exe"',
+        ];
 
-			// Get site data to find the selected theme
-			const site = siteData.getSite(siteId);
-			const selectedTheme = (site as any)?.externalThemeAddon
-				?.selectedTheme;
+        for (const codePath of codePaths) {
+          try {
+            await execAsync(`${codePath} "${selectedTheme}"`);
+            return { success: true };
+          } catch (pathError) {
+            continue;
+          }
+        }
 
-			if (!selectedTheme) {
-				logger.log("error", `No theme selected for site ${siteId}.`);
-				return {
-					success: false,
-					error: "No theme selected for this site.",
-				};
-			}
-
-			// Check if the theme directory exists
-			if (!(await fs.pathExists(selectedTheme))) {
-				logger.log(
-					"error",
-					`Selected theme directory does not exist: ${selectedTheme}`,
-				);
-				return {
-					success: false,
-					error: `Selected theme directory does not exist: ${selectedTheme}`,
-				};
-			}
-
-			// Try to open in VS Code
-			try {
-				await execAsync(`code "${selectedTheme}"`);
-				logger.log("info", `Opened ${selectedTheme} in VS Code.`);
-				return { success: true };
-			} catch (execError) {
-				// Fallback: try with full path to code executable
-				const codePaths = [
-					'"%LOCALAPPDATA%\\Programs\\Microsoft VS Code\\Code.exe"',
-					'"C:\\Program Files\\Microsoft VS Code\\Code.exe"',
-					'"C:\\Program Files (x86)\\Microsoft VS Code\\Code.exe"',
-				];
-
-				for (const codePath of codePaths) {
-					try {
-						await execAsync(`${codePath} "${selectedTheme}"`);
-						logger.log(
-							"info",
-							`Opened ${selectedTheme} in VS Code using ${codePath}.`,
-						);
-						return { success: true };
-					} catch (pathError) {
-						continue;
-					}
-				}
-
-				// If all paths fail, return error
-				return {
-					success: false,
-					error: "VS Code not found. Please make sure VS Code is installed and accessible from the command line.",
-				};
-			}
-		} catch (error) {
-			logger.log(
-				"error",
-				`Error opening VS Code for site ${siteId}:`,
-				error,
-			);
-			return { success: false, error: error.message };
-		}
-	});
+        // If all paths fail, return error
+        return {
+          success: false,
+          error:
+            'VS Code not found. Please make sure VS Code is installed and accessible from the command line.',
+        };
+      }
+    } catch (error) {
+      log.error(`Error opening VS Code for site ${siteId}:`, error);
+      return { success: false, error: error.message };
+    }
+  });
 }
