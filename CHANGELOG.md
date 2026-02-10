@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.5](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.4...1.1.5) (2026-02-10)
+
+### Bug Fixes
+
+* add necessary dependencies and switch release to use npm pack ([c940ddc](https://github.com/ascendweb/local-addon-external-theme/commit/c940ddcf4f24e0ea7201edc51b0a8e1aa517ab32))
+
 ## [1.1.4](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.3...1.1.4) (2026-02-06)
 
 ### Bug Fixes
