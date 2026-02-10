@@ -23,10 +23,13 @@ import {
 export default class ThemePicker extends Component {
   constructor(props) {
     super(props);
-
     this.props = props;
-    this.themeName = props.themePath
-      ? props.themePath.split('\\').pop() || props.themePath.split('/').pop()
+  }
+
+  get themeName() {
+    return this.props.themePath
+      ? this.props.themePath.split('\\').pop() ||
+          this.props.themePath.split('/').pop()
       : '';
   }
 
