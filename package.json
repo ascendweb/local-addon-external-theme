@@ -49,7 +49,8 @@
     "prop-types": "^15.6.2",
     "react": ">= 16.4.0",
     "react-dom": ">= 16.4.0",
-    "react-router-dom": "^4.3.1"
+    "react-router-dom": "^4.3.1",
+    "lodash": "^4"
   },
   "resolutions": {
     "trim": "^0.0.3"
@@ -59,7 +60,8 @@
     "classnames",
     "dateformat",
     "lodash",
-    "prop-types"
+    "prop-types",
+    "fs-extra"
   ],
   "engines": {
     "local-by-flywheel": "^5.0.0"

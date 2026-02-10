@@ -18,25 +18,8 @@ jobs:
         run: npm ci
 
       - name: Build Addon
-        run: npm run build
-
-      - name: Clean and reinstall production dependencies
         run: |
-          rm -rf node_modules
-          npm ci --omit=dev --ignore-scripts
-
-      - name: Create addon tarball
-        run: |
-          FOLDER="local-addon-external-theme"
-          TMP_DIR="${FOLDER}_tmp"
-          PACKAGE_DIR="$TMP_DIR/package"
-          rm -rf "$TMP_DIR"
-          mkdir -p "$PACKAGE_DIR"
-          rsync -a --exclude-from=.distignore --exclude="$TMP_DIR"/ ./ "$PACKAGE_DIR"/
-          TAR_FILE="${FOLDER}_${{ github.ref_name }}.tar.gz"
-          # Create tarball containing a top-level "package/" directory
-          tar -czf "$TAR_FILE" -C "$TMP_DIR" package
-          rm -rf "$TMP_DIR"
+          TAR_FILE=$(npm pack --json | jq -r '.[0].filename')
           echo "TAR_FILE=$TAR_FILE" >> $GITHUB_ENV
 
       - name: Create GitHub Release
