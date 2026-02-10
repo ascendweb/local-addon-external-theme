@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.6](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.5...1.1.6) (2026-02-10)
+
+### Bug Fixes
+
+* activate theme on sync and auto sync on site start ([002f508](https://github.com/ascendweb/local-addon-external-theme/commit/002f5080b671c760f1aaa43bbf0466655402ffa9))
+* dynamically generate theme name to show ([d845200](https://github.com/ascendweb/local-addon-external-theme/commit/d8452008114ce1cd358260b47fd65cbb03c6b4b6))
+
 ## [1.1.5](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.4...1.1.5) (2026-02-10)
 
 ### Bug Fixes
