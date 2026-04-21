@@ -36,6 +36,18 @@ export default function (context: LocalMain.AddonMainContext): void {
     try {
       const site = siteData.getSite(siteId);
       wpCli.run(site, ['theme', 'activate', themeName]);
+
+      // WP normally remaps nav menu locations + sidebars from the previous theme
+      // to the new one on the first admin page load (via `_wp_menus_changed()` and
+      // `retrieve_widgets()`, both hooked to `admin_init`). `wp theme activate`
+      // doesn't trigger any admin request, so those mappings never run and menus
+      // end up unassigned — especially when the new theme's folder/stylesheet
+      // differs from the old one (theme_mods are keyed per-stylesheet).
+      // Run the mappers explicitly so location assignments carry over.
+      wpCli.run(site, [
+        'eval',
+        'require_once ABSPATH . "wp-admin/includes/theme.php"; require_once ABSPATH . "wp-admin/includes/widgets.php"; if ( function_exists( "_wp_menus_changed" ) ) { _wp_menus_changed(); } if ( function_exists( "retrieve_widgets" ) ) { retrieve_widgets( true ); }',
+      ]);
     } catch (e) {
       // Report the error to the user, the Local log, and Sentry.
       errorHandler.handleError({
