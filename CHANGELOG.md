@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.8](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.7...1.1.8) (2026-04-21)
+
+### Bug Fixes
+
+* cache the menu locations, activate the theme, apply the locations ([17453ad](https://github.com/ascendweb/local-addon-external-theme/commit/17453add0798e2e6ced83e9f1cbc83d90d80c85f))
+
 ## [1.1.7](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.6...1.1.7) (2026-04-21)
 
 ### Bug Fixes
