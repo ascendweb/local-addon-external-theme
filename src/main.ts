@@ -35,18 +35,26 @@ export default function (context: LocalMain.AddonMainContext): void {
 
     try {
       const site = siteData.getSite(siteId);
-      wpCli.run(site, ['theme', 'activate', themeName]);
 
-      // WP normally remaps nav menu locations + sidebars from the previous theme
-      // to the new one on the first admin page load (via `_wp_menus_changed()` and
-      // `retrieve_widgets()`, both hooked to `admin_init`). `wp theme activate`
-      // doesn't trigger any admin request, so those mappings never run and menus
-      // end up unassigned — especially when the new theme's folder/stylesheet
-      // differs from the old one (theme_mods are keyed per-stylesheet).
-      // Run the mappers explicitly so location assignments carry over.
+      // Snapshot the currently-active theme's `nav_menu_locations` (and
+      // `sidebars_widgets`) BEFORE activating. theme_mods are keyed per-
+      // stylesheet, so when we switch from e.g. `prime-roofing` to
+      // `theme-prime-roofing`, WP's own carry-over in `switch_theme()` can
+      // silently miss them if the activation runs twice or if anything in
+      // the new theme's setup hooks clears them. We re-apply after activation.
       wpCli.run(site, [
         'eval',
-        'require_once ABSPATH . "wp-admin/includes/theme.php"; require_once ABSPATH . "wp-admin/includes/widgets.php"; if ( function_exists( "_wp_menus_changed" ) ) { _wp_menus_changed(); } if ( function_exists( "retrieve_widgets" ) ) { retrieve_widgets( true ); }',
+        `$s = get_stylesheet(); $m = get_option("theme_mods_{$s}"); if (!is_array($m)) { $m = array(); } update_option('_external_theme_addon_prev_stylesheet', $s); update_option('_external_theme_addon_prev_mods', $m); WP_CLI::log("[external-theme] snapshot from {$s}: nav_menu_locations=" . (empty($m['nav_menu_locations']) ? 'EMPTY' : wp_json_encode($m['nav_menu_locations'])));`,
+      ]);
+
+      wpCli.run(site, ['theme', 'activate', themeName]);
+
+      // Re-apply nav_menu_locations (and sidebars_widgets) from the snapshot
+      // onto the newly-active stylesheet. No-op if nothing was captured or
+      // if we happened to "switch" to the same stylesheet.
+      wpCli.run(site, [
+        'eval',
+        `$prev = get_option('_external_theme_addon_prev_stylesheet'); $prev_mods = get_option('_external_theme_addon_prev_mods'); $curr = get_stylesheet(); if (empty($prev) || !is_array($prev_mods) || $prev === $curr) { WP_CLI::log("[external-theme] nothing to copy (prev={$prev} curr={$curr})"); } else { $curr_mods = get_option("theme_mods_{$curr}"); if (!is_array($curr_mods)) { $curr_mods = array(); } $copied = array(); foreach (array('nav_menu_locations', 'sidebars_widgets') as $k) { if (!empty($prev_mods[$k])) { $curr_mods[$k] = $prev_mods[$k]; $copied[] = $k; } } update_option("theme_mods_{$curr}", $curr_mods); WP_CLI::log("[external-theme] copied " . implode(',', $copied) . " from {$prev} to {$curr}"); } delete_option('_external_theme_addon_prev_stylesheet'); delete_option('_external_theme_addon_prev_mods');`,
       ]);
     } catch (e) {
       // Report the error to the user, the Local log, and Sentry.
