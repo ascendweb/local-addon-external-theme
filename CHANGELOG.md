@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.7](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.6...1.1.7) (2026-04-21)
+
+### Bug Fixes
+
+* potential fix for menus not getting remapped automatically ([a54b266](https://github.com/ascendweb/local-addon-external-theme/commit/a54b266e46f08c49dcc9aa67d3d52cc7839c3ae2))
+
 ## [1.1.6](https://github.com/ascendweb/local-addon-external-theme/compare/1.1.5...1.1.6) (2026-02-10)
 
 ### Bug Fixes
